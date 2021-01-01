@@ -2,8 +2,11 @@
 
 Welcome to Corey's Simple Password Bank!
 
-Use a master password encoded by hashlib.md5 to access the bank.
+Uses a master password encoded by hashlib.md5 to access the bank.
 
-On CLI, run ' python passwordbank.py ' to begin the program.
+How to Run:
+Clone the repo to your desired location.
+
+On CLI, navigate to the location cloned and run ' python passwordbank.py ' to begin the program.
 
 Yay
