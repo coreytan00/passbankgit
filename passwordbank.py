@@ -203,6 +203,7 @@ def checkPassword():
 	try:
 		master_pass = pickle.load(open("pass.p", "rb"))
 	except FileNotFoundError:
+		pickle.dump({}, open("save.p", "wb"))
 		while True:
 			str_to_hash = input("Please create a master password for this program: ")
 			decision = ays()
