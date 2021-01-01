@@ -38,13 +38,55 @@ def ays():
 		else:
 			print("Invalid input. y/n")
 
+def encrypt(string, shift=5):
+	res = ""
+	for i in range(len(string)):
+		value = ord(string[i])
+		value += shift + i
+		res += chr(value)
+	return res
+
+def decrypt(string, shift=5):
+	res = ""
+	for i in range(len(string)):
+		value = ord(string[i])
+		value -= (shift + i)
+		res += chr(value)
+	return res
+
+def full_encrypt(site, user, password):
+	"""uses encrypted site as string"""
+	total = sum([ord(site[i]) for i in range(len(site))])
+	shift = total % 13
+	res_user = encrypt(user, shift)
+	res_pass = encrypt(password, shift)
+	return res_user, res_pass
+
+def partial_decrypt(site, user, password):
+	"""uses encrypted site as string"""
+	total = sum([ord(site[i]) for i in range(len(site))])
+	shift = total % 13
+	res_user = decrypt(user, shift)
+	res_pass = decrypt(password, shift)
+	return res_user, res_pass
+
+def recrypt(old_site, new_site, user_encrypted, password_encrypted):
+	duser, dpass = partial_decrypt(old_site, user_encrypted, password_encrypted)
+	new_user_encrypted, new_password_encrypted = full_encrypt(new_site, duser, dpass)
+	return new_user_encrypted, new_password_encrypted
+
 def add(login_db):
 	print("_____Adding_____")
 	site = input("Site: ")
 	user = input("User/Email: ")
 	password = input("Password: ")
-	login_db[site] = [user, password]
-	print("Finished adding entry {}".format(site))
+	#encrypt
+	site_encrypted = encrypt(site)
+	user_encrypted, password_encrypted = full_encrypt(site_encrypted, user, password)
+
+	#add
+	login_db[site_encrypted] = [user_encrypted, password_encrypted]
+	print("Finished adding entry '{}'.".format(site))
 	print()
 	cont()
 
@@ -53,16 +95,18 @@ def retrieve(login_db):
 	if not login_db:
 		print("Empty Bank.")
 	else:
-		site = input("Site to retrieve from: ")
+		site = input("Site: ")
 		try:
-			values = login_db[site]
+			site_encrypted = encrypt(site)
+			values = login_db[site_encrypted]
 		except KeyError:
 			print(site, "not found in database.")
 			print()
 		else:
-			print("Retrieving entry {}".format(site))
-			print("User/Email: ", values[0])
-			print("Password: ", values[1])
+			print("Retrieving entry '{}'.".format(site))
+			duser, dpass = partial_decrypt(site_encrypted, values[0], values[1])
+			print("User/Email: ", duser)
+			print("Password: ", dpass)
 			print()
 	cont()
 
@@ -71,10 +115,9 @@ def view(login_db):
 	if not login_db:
 		print("Empty Bank.")
 	else:
-		for site, values in sorted(login_db.items()):
-			print(site)
-			#print("User/Email: ", values[0])
-			#print("Pass: ", values[1])
+		for site in sorted(login_db.keys()):
+			dsite = decrypt(site)
+			print(dsite)
 	print()
 	cont()
 
@@ -85,14 +128,16 @@ def edit(login_db):
 	else:
 		site = input("Site to edit: ")
 		try:
-			values = login_db[site]
+			site_encrypted = encrypt(site)
+			values = login_db[site_encrypted]
 		except KeyError:
 			print(site, "not found in database.")
 			print()
 		else:
 			print("Retrieving entry {}".format(site))
-			print("User/Email: ", values[0])
-			print("Password: ", values[1])
+			duser, dpass = partial_decrypt(site_encrypted, values[0], values[1])
+			print("User/Email: ", duser)
+			print("Password: ", dpass)
 			print()
 			while True:
 				inp = input("Press 1 to edit site, 2 to edit user/email, 3 to edit password, c to cancel: ")
@@ -100,34 +145,39 @@ def edit(login_db):
 					print("Current Site: ", site)
 					user_site = input("New Site: ")
 					#check if already exists
-					if login_db.get(user_site):
+					user_site_encrypted = encrypt(user_site)
+					if login_db.get(user_site_encrypted):
 						print("Entry {} already exists. You will overwrite it.".format(user_site))
 						decision = ays()
 						if decision == "y":
-							login_db[user_site] = values
-							del login_db[site]
+							new_user, new_pass = recrypt(site_encrypted, user_site_encrypted, values[0], values[1])
+							login_db[user_site_encrypted] = [new_user, new_pass]
+							del login_db[site_encrypted]
 							break
 						elif decision == "n":
 							continue 
 					else:
-						login_db[user_site] = values
-						del login_db[site]
+						new_user, new_pass = recrypt(site_encrypted, user_site_encrypted, values[0], values[1])
+						login_db[user_site_encrypted] = [new_user, new_pass]
+						del login_db[site_encrypted]
 						break
 				elif inp == "2":
-					print("Current User/Email: ", values[0])
+					print("Current User/Email: ", duser)
 					user_email = input("New User/Email: ")
 					decision = ays()
 					if decision == "y":
-						values[0] = user_email
+						new_user, _ = full_encrypt(site_encrypted, user_email, dpass)
+						values[0] = new_user
 						break
 					elif decision == "n":
 						continue 
 				elif inp == "3":
-					print("Current Password: ", values[1])
-					password = input("New Password: ")
+					print("Current Password: ", dpass)
+					user_password = input("New Password: ")
 					decision = ays()
 					if decision == "y":
-						values[1] = password
+						_, new_pass = full_encrypt(site_encrypted, duser, user_password)
+						values[1] = new_pass
 						break
 					elif decision == "n":
 						continue
@@ -146,18 +196,19 @@ def delete(login_db):
 	else:
 		site = input("Site and respective information to delete: ")
 		try:
-			values = login_db[site]
+			site_encrypted = encrypt(site)
+			values = login_db[site_encrypted]
 		except KeyError:
 			print(site, "not found in database.")
 			print()
 		else:
-			print("Retrieving entry {}".format(site))
-			print("User/Email: ", values[0])
-			print("Password: ", values[1])
+			duser, dpass = partial_decrypt(site_encrypted, values[0], values[1])
+			print("User/Email: ", duser)
+			print("Password: ", dpass)
 			print("You are going to delete entry {} including user/email and password.".format(site))
 			decision = ays()
 			if decision == "y":
-				del login_db[site]
+				del login_db[site_encrypted]
 			print()
 	cont()
 
