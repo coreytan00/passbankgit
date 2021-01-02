@@ -9,6 +9,9 @@ How to Run:
 
 Clone the repo or download the zip to your desired location.
 
-On CLI, navigate to the location and run ' python passwordbank.py ' to begin the program.
+Navigate to the location either in the folder or on CLI.
+
+If on CLI, run ' python passwordbank.py ' to begin the program.
+If in folder, open passwordbank.py with Python.
 
 Yay
