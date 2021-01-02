@@ -6,8 +6,8 @@ Uses a master password encoded by hashlib.md5 to access the bank.
 _____________________________________________
 How to Run:
 
-Clone the repo to your desired location.
+Clone the repo or download the zip to your desired location.
 
-On CLI, navigate to the location cloned and run ' python passwordbank.py ' to begin the program.
+On CLI, navigate to the location and run ' python passwordbank.py ' to begin the program.
 
 Yay
