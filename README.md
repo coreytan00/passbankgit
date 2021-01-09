@@ -7,13 +7,13 @@ Basic encryption and cascade file deletion for save files.
 _____________________________________________
 How to Run:
 
+# may not need
 If you do not have python, head to https://www.python.org/downloads/ to download the latest version.
 
 Clone the repo or download the zip to your desired location.
 
-Navigate to the location either in the folder or on CLI.
+Navigate to the location either in the folder or on the CLI (Command Line Interface).
 
-If on CLI, run ' python passwordbank.py ' to begin the program.
-If in folder, open passwordbank.py with Python.
+Go into the "pb" directory and run "passwordbank.exe" to execute. Create a shortcut to somewhere else for easy access.
 
-Yay
+Yay!
