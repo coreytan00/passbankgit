@@ -7,7 +7,7 @@
 _____________________________________________
 ## How to Run:
 
-"""
+""" (ignore for now)
 If you do not have python, head to https://www.python.org/downloads/ to download the latest version.
 """
 
