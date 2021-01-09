@@ -7,8 +7,7 @@ Basic encryption and cascade file deletion for save files.
 _____________________________________________
 How to Run:
 
-# may not need
-If you do not have python, head to https://www.python.org/downloads/ to download the latest version.
+#If you do not have python, head to https://www.python.org/downloads/ to download the latest version.#ignore for now
 
 Clone the repo or download the zip to your desired location.
 
